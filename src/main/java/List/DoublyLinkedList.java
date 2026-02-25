@@ -26,6 +26,16 @@ public class DoublyLinkedList extends LinkedList{
             head = null;
         }
     }
+    
+    public int length() {
+        int len = 0;
+        DoublyNode temp = (DoublyNode) head;
+        while (temp != null) {
+            len++;
+            temp = (DoublyNode) temp.getNext();
+        }
+        return len;
+    }
 
     /**
      * Write the method which constructs an array of linked lists by dividing the original linked list into $k$ equal
@@ -34,7 +44,29 @@ public class DoublyLinkedList extends LinkedList{
      * copied from the original linked list). You are not allowed to use any linked list methods.
      */
     public DoublyLinkedList[] divideList(int k){
-        return null;
+        if (head == null) return null;
+        DoublyLinkedList[] result = new DoublyLinkedList[k];
+        for (int i = 0; i < k; i++) {
+            DoublyLinkedList list = new DoublyLinkedList();
+            DoublyNode temp = (DoublyNode) head;
+            for (int j = 0; j < i; j++) {
+                temp = (DoublyNode) temp.next;
+            }
+            while (temp != null) {
+                Node newNode = new Node(temp.data);
+                if (list.head == null) {
+                    list.head = newNode;
+                } else {
+                    list.tail.next = newNode;
+                }
+                list.tail = newNode;
+                for (int m = 0; m < k && temp != null; m++) {
+                    temp = (DoublyNode) temp.next;
+                }
+            }
+            result[i] = list;
+        }
+        return result;
     }
 
     /**
@@ -108,6 +140,30 @@ public class DoublyLinkedList extends LinkedList{
      * methods. You are allowed to use attributes, constructors, getters and setters.
      */
     public void removeKthBeforeLast(int K){
+        int length = this.length();
+        if (length < K) return;
+        DoublyNode prev = null;
+        DoublyNode temp = (DoublyNode) tail;
+        for (int i = 1; i < K; i++) {
+            prev = temp;
+            temp = temp.getPrevious();
+        }
+        if (prev == null) {
+            tail = ((DoublyNode) tail).getPrevious();
+            if (tail == null) {
+                head = null;
+                return;
+            }
+            tail.next = null;
+        } else if (temp == head) {
+            head = head.next;
+            ((DoublyNode)head).setPrevious(null);
+        } else {
+            prev.setPrevious(temp.getPrevious());
+            temp.getPrevious().setNext(prev);
+            temp.setNext(null);
+            temp.setPrevious(null);
+        }
     }
 
     /**
@@ -116,6 +172,23 @@ public class DoublyLinkedList extends LinkedList{
      * attributes, constructors, getters and setters.
      */
     public void reverse(){
+        if (head == null) return;
+        
+        DoublyNode prev = null;
+        DoublyNode temp = (DoublyNode) head;
+        DoublyNode next;
+        
+        while (temp != null) {
+            next = (DoublyNode) temp.getNext();
+            temp.setNext(prev);
+            temp.setPrevious(next);
+            prev = temp;
+            temp = temp.getPrevious();
+        }
+        
+        tail = head;
+        head = prev;
+        
     }
 
     /**
@@ -134,7 +207,39 @@ public class DoublyLinkedList extends LinkedList{
      * setters. Write the method in the DoublyLinkedList class.
      */
     public DoublyLinkedList sortElements(){
-        return this;
+        if (head == null) return null;
+        DoublyLinkedList result = new DoublyLinkedList();
+        
+        int largestValue = Integer.MIN_VALUE;
+        DoublyNode temp = (DoublyNode) head;
+        while (temp != null) {
+            if (temp.data > largestValue) {
+                largestValue = temp.data;
+            }
+            temp = (DoublyNode) temp.getNext();
+        }
+        
+        for (int i = 0; i <= largestValue; i++) {
+            temp = (DoublyNode) head;
+            int counter = 0;
+            while (temp != null) {
+                if (temp.data == i) {
+                    counter++;
+                }
+                temp = (DoublyNode) temp.getNext();
+            }
+            for (int m = 0; m < counter; m++) {
+                DoublyNode newNode = new DoublyNode(i);
+                if (result.head == null) {
+                    result.head = newNode;
+                } else {
+                    result.tail.next = newNode;
+                }
+                result.tail = newNode;
+            }
+        }
+        
+        return result;
     }
 
     /**
