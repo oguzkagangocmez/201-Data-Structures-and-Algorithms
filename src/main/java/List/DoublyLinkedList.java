@@ -41,7 +41,7 @@ public class DoublyLinkedList extends LinkedList{
      * Write the method which constructs an array of linked lists by dividing the original linked list into $k$ equal
      * parts. The first, second, ..., $k$’th element of the original linked list will be the first element of the first,
      * second, . . ., $k$’th output linked list, etc. The elements of the output linked list should be created (not
-     * copied from the original linked list). You are not allowed to use any linked list methods.
+     * copied from the original linked list). You are not allowed to use any linked list methods
      */
     public DoublyLinkedList[] divideList(int k){
         if (head == null) return null;
