@@ -95,14 +95,42 @@ public class LinkedList {
      * $k$ to store current pointers in each of $k$ lists.
      */
     public LinkedList(LinkedList[] list, int k, int m) {
-
+        this.head = null;
+        this.tail = null;
+        
+        Node[] heads = new Node[k];
+        for (int i = 0; i < k; i++) {
+            heads[i] = list[i].getHead();
+        }
+        
+        for (int y = 0; y < m; y++) {
+            for (int x = 0; x < k; x++) {
+                Node newNode = new Node(heads[x].data);
+                if (head == null) {
+                    head = newNode;
+                } else {
+                    tail.next = newNode;
+                }
+                tail = newNode;
+                heads[x] = heads[x].getNext();
+            }
+        }
+        
     }
 
     /**
      * Write the method which add newnode after each node in the singly linked list.
      */
     public void addAfterEachNode(Node newNode) {
-
+        if (head == null) return;
+        Node temp = head;
+        
+        while (temp != null){
+            Node node = new Node(newNode.data);
+            node.next = temp.next;
+            temp.next = node;
+            temp = temp.next.next;
+        }
     }
 
     /**
@@ -121,6 +149,12 @@ public class LinkedList {
      * </ul>
      */
     public LinkedList calculateCounts() {
+        if (head == null) return null;
+        LinkedList result = new LinkedList();
+        Node temp = head;
+        while (temp != null) {
+            temp = temp.next;
+        }
         return null;
     }
 
@@ -130,7 +164,16 @@ public class LinkedList {
      * to use any singly linked list methods, just attributes, constructors, getters and setters.
      */
     public boolean containsOnlyDuplicates() {
-        return false;
+        for (Node temp = head; temp != null; temp = temp.next) {
+            int count = 0;
+            for (Node runner = head; runner != null; runner = runner.next) {
+                if (runner.data == temp.data) {
+                    count++;
+                }
+            }
+            if (count != 2) return false;
+        }
+        return true;
     }
 
     /**
@@ -140,7 +183,16 @@ public class LinkedList {
      * attributes, constructors, getters and setters.
      */
     public boolean containsOnlyTriplicates() {
-        return false;
+        for (Node temp = head; temp != null; temp = temp.next) {
+            int count = 0;
+            for (Node runner = head; runner != null; runner = runner.next) {
+                if (runner.data == temp.data) {
+                    count++;
+                }
+            }
+            if (count != 3) return false;
+        }
+        return true;
     }
 
     /**
@@ -148,6 +200,31 @@ public class LinkedList {
      * singly linked list.
      */
     public void deleteBetween(int p, int q) {
+        int length = length();
+        if (head == null || p < 0 || q > length) return;
+        Node prevP = null;
+        Node afterQ = head;
+        
+        for (int i = 0; i <= q; i++) {
+            if (i < p)
+                prevP = afterQ;
+            afterQ = afterQ.next;
+        }
+        
+        if (prevP == null) {
+            head = afterQ;
+            if (afterQ == null) {
+                tail = null;
+            }
+        } else {
+            if (afterQ == null) {
+                tail = prevP;
+                tail.next = null;
+            } else {
+                prevP.next = afterQ;
+            }
+        }
+        
     }
 
     /**
@@ -244,7 +321,40 @@ public class LinkedList {
      * resulting list should be new. You can not use any linked list methods except getters and setters.
      */
     public static LinkedList difference(LinkedList list1, LinkedList list2) {
-        return list1;
+        LinkedList diff = new LinkedList();
+        Node ptr1 = list1.head;
+        Node ptr2 = list2.head;
+        
+        while (ptr1 != null && ptr2 != null) {
+            if (ptr1.data < ptr2.data) {
+                Node newNode = new Node(ptr1.data);
+                if (diff.head == null) {
+                    diff.head = newNode;
+                } else {
+                    diff.tail.next = newNode;
+                }
+                diff.tail = newNode;
+                ptr1 = ptr1.next;
+            } else if (ptr1.data == ptr2.data) {
+                ptr1 = ptr1.next;
+                ptr2 = ptr2.next;
+            } else {
+                ptr2 = ptr2.next;
+            }
+        }
+        
+        while (ptr1 != null) {
+            Node newNode = new Node(ptr1.data);
+            if (diff.head == null) {
+                diff.head = newNode;
+            } else {
+                diff.tail.next = newNode;
+            }
+            diff.tail = newNode;
+            ptr1 = ptr1.next;
+        }
+        
+        return diff;
     }
 
     /**
@@ -262,7 +372,25 @@ public class LinkedList {
      * </ul>
      */
     public static LinkedList eratosthenes(int N) {
-        return null;
+        LinkedList list = new LinkedList();
+        for (int i = 2; i <= N; i++) {
+            list.insertLast(new Node(i));
+        }
+        for (Node temp = list.head; temp != null; temp = temp.next) {
+            Node prev = temp;
+            Node scan = prev.next;
+            while (scan != null) {
+                if (scan.data % temp.data == 0) {
+                    prev.next = scan.next;
+                    scan.next = null;
+                    scan = prev.next;
+                } else {
+                    prev = scan;
+                    scan = scan.next;
+                }
+            }
+        }
+        return list;
     }
 
     /**
@@ -271,8 +399,27 @@ public class LinkedList {
      * any singly linked list methods. You are allowed to use attributes, constructors, getters and setters. Write the
      * method in the LinkedList class.
      */
-    public boolean evenOddSorted() {
-        return false;
+    public boolean evenOddSorted() {//FIXME
+        if (head == null || head.next == null) return true;
+        Node oddIdx = head;
+        Node evenIdx = head.next;
+        
+        while (oddIdx != null) {
+            if (oddIdx.next != null && oddIdx.next.next != null) {
+                if (oddIdx.next.next.data < oddIdx.data)
+                    return false;
+                oddIdx = oddIdx.next.next;
+            }
+        }
+        
+        while (evenIdx != null) {
+            if (evenIdx.next != null && evenIdx.next.next != null) {
+                if (evenIdx.next.next.data > evenIdx.data)
+                    return false;
+                evenIdx = evenIdx.next.next;
+            }
+        }
+        return true;
     }
 
     /**
@@ -283,7 +430,33 @@ public class LinkedList {
      * in the original linked list.
      */
     public LinkedList getIndexed(LinkedList list) {
-        return this;
+        if (head == null || list.head == null) return null;
+        LinkedList result = new LinkedList();
+        Node prevIndex = null;
+        Node index = list.head;
+        int toGo = 0;
+        Node curr = head;
+        while (index != null) {
+            if (curr == head)
+                toGo = index.data - 1;
+            else toGo = index.data - prevIndex.data;
+            
+            for (int i = 0; i < toGo ;i++)
+                curr = curr.next;
+            
+            Node newNode = new Node(curr.data);
+            if (result.head == null) {
+                result.head = newNode;
+            } else {
+                result.tail.next = newNode;
+            }
+            result.tail = newNode;
+            
+            prevIndex = index;
+            index = index.next;
+        }
+        
+        return result;
     }
 
     /**
@@ -306,7 +479,29 @@ public class LinkedList {
      * getters and setters.
      */
     public static LinkedList intersec(LinkedList list1, LinkedList list2) {
-        return list1;
+        if (list1.head == null || list2.head == null) return null;
+        LinkedList intersec = new LinkedList();
+        Node ptr1 = list1.head;
+        Node ptr2 = list2.head;
+        
+        while (ptr1 != null && ptr2 != null) {
+            if (ptr1.data == ptr2.data) {
+                Node newNode = new Node(ptr1.data);
+                if (intersec.head == null) {
+                    intersec.head = newNode;
+                } else {
+                    intersec.tail.next = newNode;
+                }
+                intersec.tail = newNode;
+                ptr1 = ptr1.next;
+                ptr2 = ptr2.next;
+            } else if (ptr1.data < ptr2.data) {
+                ptr1 = ptr1.next;
+            } else {
+                ptr2 = ptr2.next;
+            }
+        }
+        return intersec;
     }
 
     /**
@@ -314,6 +509,20 @@ public class LinkedList {
      * $k > 1$ {\bf exactly}.
      */
     public boolean isIncreasingOfSizeK(int k) {
+        if (head == null || k == 0) return false;
+        if (k == 1) return true;
+        int counter = 1;
+        Node curr = head;
+        while (curr != null) {
+            if (curr.next != null && curr.data >= curr.next.data) {
+                if (counter == k) return true;
+                counter = 1;
+            } else if (curr.next != null && curr.data < curr.next.data) {
+                counter++;
+            }
+            if (curr.next == null && counter == k) return true;
+            curr = curr.next;
+        }
         return false;
     }
 
@@ -325,9 +534,23 @@ public class LinkedList {
      *     <li>Return the remaining node.</li>
      * </ul>
      * Let say the list is 1 2 3 4 5 6, and k = 2, then 2, 4, 6, 3, 1 will be deleted, 5 remains.
+     * -I assumed k does not exceed the length of the list-
      */
     public Node lastOneWins(int k) {
-        return null;
+        if (k == 1) return tail;
+        tail.next = head;
+        Node prev = null;
+        Node curr = head;
+        while (curr != null) {
+            for (int m = 0; m < k - 1; m++) {
+                prev = curr;
+                curr = curr.next;
+            }
+            prev.next = curr.next;
+            curr.next = null;
+            curr = prev.next;
+        }
+        return prev;
     }
 
     /**
@@ -339,7 +562,22 @@ public class LinkedList {
      * Let say N = 200, the function will return 2, 2, 2, 5, 5. You are not allowed to use any array in the function.
      */
     public static LinkedList primeDivisors(int N) {
-        return null;
+        LinkedList primes = new LinkedList();
+        LinkedList prDiv = new LinkedList();
+        for (int i = 2; i <= N; i++) {
+            if (isPrime(i))
+                primes.insertLast(new Node(i));
+        }
+        Node candidate = primes.head;
+        while (N != 1) {
+            if (N % candidate.data == 0) {
+                N /= candidate.data;
+                prDiv.insertLast(new Node(candidate.data));
+            } else {
+                candidate = candidate.next;
+            }
+        }
+        return prDiv;
     }
 
     /**
@@ -353,7 +591,29 @@ public class LinkedList {
      * </ul>
      */
     public static LinkedList fibonacciWay(int N) {
-        return null;
+        LinkedList fibs = new LinkedList();
+        for (int i = 0; i < N; i++) {
+            int fb = fib(i);
+            if (fb <= N) fibs.insertFirst(new Node(fb));
+            else break;
+        }
+        Node candidateFibo = fibs.head;
+        LinkedList fibWay = new LinkedList();
+        while (N != 0) {
+            if (N >= candidateFibo.data) {
+                N -= candidateFibo.data;
+                fibWay.insertLast(new Node(candidateFibo.data));
+            } else {
+                candidateFibo = candidateFibo.next;
+            }
+        }
+        return fibWay;
+    }
+    public static int fib(int N) {
+        if (N < 0) return Integer.MIN_VALUE;
+        if (N == 0) return 0;
+        if (N == 1) return 1;
+        return fib(N - 1) + fib(N - 2);
     }
 
     /**
@@ -376,7 +636,7 @@ public class LinkedList {
                         continue;
                     } else if (curr == tail) {
                         tail = prev;
-                        tail.next = null; // lack of this line, i sent 20 minutes more than usual.
+                        tail.next = null; // lack of this line, i spent 20 minutes more.
                     } else {
                         if (prev == null) break;
                         prev.next = curr.next;
@@ -395,7 +655,33 @@ public class LinkedList {
      * in the list and returns a new linked list containing these GCD values.
      */
     public LinkedList windowedPairwiseGCD(int k) {
-        return this;
+        if (head == null) return null;
+        //assuming list has enough length and k >= 2
+        int length = length();
+        LinkedList list = new LinkedList();
+        for (int i = 0; i < length - k + 1; i++) {
+            Node start = head;
+            for (int j = 0; j < i; j++) {
+                start = start.next;
+            }
+            int div = gcd(start.data, start.next.data);
+            start = start.next.next;
+            for (int m = 0; m < k - 2; m++) {
+                div = gcd(div, start.data);
+                start = start.next;
+            }
+            list.insertLast(new Node(div));
+        }
+        return list;
+    }
+    public static int gcd(int a, int b) {
+        // just for two positive numbers and for the method above
+        while (true) {
+            int r = a % b;
+            if (r == 0) return b;
+            a = b;
+            b = r;
+        }
     }
 
     /**
@@ -468,7 +754,6 @@ public class LinkedList {
             z0 = z1;
             z1 = ahead;
         }
-        
         return pells;
     }
 
