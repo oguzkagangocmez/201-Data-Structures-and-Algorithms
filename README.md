@@ -15,7 +15,7 @@ Beyond coursework, it serves as a space where I explore and implement **addition
 
 ---
 
-## 🙏 Acknowledgment
+## 🙏 Acknowledgement
 
 All original course materials and problem sets belong to the **CS201 instructors** and the official course repository owner.
 
