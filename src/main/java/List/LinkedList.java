@@ -150,12 +150,32 @@ public class LinkedList {
      */
     public LinkedList calculateCounts() {
         if (head == null) return null;
-        LinkedList result = new LinkedList();
-        Node temp = head;
-        while (temp != null) {
-            temp = temp.next;
+        LinkedList list = new LinkedList();
+        Node curr = head;
+        
+        for (int i = 1; i < curr.data; i++) {
+            list.insertLast(new Node(0));
         }
-        return null;
+        int counter = 1;
+        
+        while (curr != null) {
+            if (curr.next != null) {
+                if (curr.next.data == curr.data) {
+                    counter++;
+                } else {
+                    list.insertLast(new Node(counter));
+                    counter = 1;
+                    for (int i = 1; i < curr.next.data - curr.data; i++) {
+                        list.insertLast(new Node(0));
+                    }
+                }
+            } else {
+                list.insertLast(new Node(counter));
+            }
+            curr = curr.next;
+        }
+        
+        return list;
     }
 
     /**
