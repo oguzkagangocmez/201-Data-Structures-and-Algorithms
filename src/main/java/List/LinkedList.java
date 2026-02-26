@@ -399,7 +399,7 @@ public class LinkedList {
      * any singly linked list methods. You are allowed to use attributes, constructors, getters and setters. Write the
      * method in the LinkedList class.
      */
-    public boolean evenOddSorted() {//FIXME
+    public boolean evenOddSorted() {
         if (head == null || head.next == null) return true;
         Node oddIdx = head;
         Node evenIdx = head.next;
@@ -408,16 +408,17 @@ public class LinkedList {
             if (oddIdx.next != null && oddIdx.next.next != null) {
                 if (oddIdx.next.next.data < oddIdx.data)
                     return false;
-                oddIdx = oddIdx.next.next;
-            }
+            } else
+                break;
+            oddIdx = oddIdx.next.next;
         }
-        
         while (evenIdx != null) {
             if (evenIdx.next != null && evenIdx.next.next != null) {
                 if (evenIdx.next.next.data > evenIdx.data)
                     return false;
-                evenIdx = evenIdx.next.next;
-            }
+            } else
+                break;
+            evenIdx = evenIdx.next.next;
         }
         return true;
     }
@@ -620,7 +621,7 @@ public class LinkedList {
      * use any methods from the LinkedList class. You can assume both the original list and list2 do not contain
      * duplicate elements. Do not modify list2. Your method should run in ${\cal O}(N^2)$ time.
      */
-    public void remove(LinkedList list2) { //TODO
+    public void remove(LinkedList list2) {
         if (head == null || list2 == null || list2.head == null) return;
         
         Node prev = null;
