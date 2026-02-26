@@ -583,6 +583,15 @@ public class TestLinkedList {
         list.insertArray(new int[]{2, 4, 4, 6, 6, 6, 8, 8, 8, 8});
         list1 = list.calculateCounts();
         assertEquals("0 1 0 2 0 3 0 4", list1.toString());
+        // my test case is as follows
+        list = new LinkedList();
+        list.insertArray(new int[] {1,3,5,8});
+        list1 = list.calculateCounts();
+        assertEquals("1 0 1 0 1 0 0 1", list1.toString());
+        list = new LinkedList();
+        list.insertArray(new int[] {3,5,8,9,15});
+        list1 = list.calculateCounts();
+        assertEquals("0 0 1 0 1 0 0 1 1 0 0 0 0 0 1", list1.toString());
     }
 
     @Test
