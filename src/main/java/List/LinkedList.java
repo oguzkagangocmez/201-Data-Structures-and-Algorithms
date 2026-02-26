@@ -455,7 +455,6 @@ public class LinkedList {
             prevIndex = index;
             index = index.next;
         }
-        
         return result;
     }
 
