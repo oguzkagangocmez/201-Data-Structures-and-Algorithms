@@ -1,7 +1,5 @@
 package List;
 
-import Array.Element;
-
 public class Stack {
     private Node top;
 
@@ -60,6 +58,23 @@ public class Stack {
      * </ul>
      */
     public Stack(Stack s, int p, int q){
+        this.top = null;
+        Node fakeHead = null;
+        Node fakeTail = null;
+        Node curr = s.top;
+        for (int i = 0; i <= q; i++) {
+            if (i >= p) {
+                Node newNode = new Node(curr.data);
+                if (fakeHead == null) {
+                    fakeHead = newNode;
+                } else {
+                    fakeTail.next = newNode;
+                }
+                fakeTail = newNode;
+            }
+            curr = curr.next;
+        }
+        top = fakeHead;
     }
 
     /**
@@ -69,6 +84,15 @@ public class Stack {
      * constructors, getters and setters.
      */
     public void addToStack(Stack s, int p, int q){
+        Node curr = s.top;
+        for (int i = 1; i <= q; i++) {
+            if (i >= p) {
+                Node newNode = new Node(curr.data);
+                newNode.next = top;
+                top = newNode;
+            }
+            curr = curr.next;
+        }
     }
 
     /**
@@ -78,7 +102,21 @@ public class Stack {
      * functions. You should use a single external stack.
      */
     public boolean checkString(int[] s){
-        return false;
+        Stack external = new Stack();
+        for (int j : s) {
+            if (j == 1) {
+                external.push(new Node(1));
+            } else if (j == 2) {
+                external.push(new Node(2));
+            } else if (j == 3) {
+                if (external.isEmpty()) return false;
+                if (external.pop().data != 2) return false;
+            } else {
+                if (external.isEmpty()) return false;
+                if (external.pop().data != 1) return false;
+            }
+        }
+        return external.isEmpty();
     }
 
     /**
@@ -87,7 +125,23 @@ public class Stack {
      * stacks, just attributes, constructors, getters and setters.
      */
     public Node pop(int k){
-        return null;
+        if (top == null) return null;
+        if (k == 1) {
+            Node topNode = top;
+            top = top.next;
+            return topNode;
+        } else {
+            int index = 1;
+            Node prev = null;
+            Node target = top;
+            for (int i = 1; i < k; i++) {
+                prev = target;
+                target = target.next;
+            }
+            prev.next = target.next;
+            target.next = null;
+            return new Node(target.data);
+        }
     }
 
     /**
@@ -96,7 +150,36 @@ public class Stack {
      * getters and setters.
      */
     public LinkedList popBottomK(int k){
-        return new LinkedList();
+        if (k == 0 || top == null) return null;
+        int length = 0;
+        Node temp = top;
+        while (temp != null) {
+            temp = temp.next;
+            length++;
+        }
+        LinkedList list = new LinkedList();
+        Node tempBefore = null;
+        temp = top;
+        for (int i = 0; i < length - k; i++) {
+            tempBefore = temp;
+            temp = temp.next;
+        }
+        if (tempBefore == null) {
+            top = null;
+        } else {
+            tempBefore.next = null;
+        }
+        while (temp != null) {
+            Node newNode = new Node(temp.data);
+            if (list.isEmpty()) {
+                list.tail = newNode;
+            }
+            newNode.setNext(list.head);
+            list.head = newNode;
+            temp = temp.next;
+        }
+        
+        return list;
     }
 
     /**
@@ -105,6 +188,19 @@ public class Stack {
      * external stacks. You are allowed to use attributes, constructors, getters and setters.
      */
     public void push(int k, int data){
+        Node newNode = new Node(data);
+        if (k == 1) {
+            newNode.next = top;
+            top = newNode;
+        } else {
+            Node beforeKth = top;
+            for (int i = 1; i < k - 1; i++) {
+                beforeKth = beforeKth.next;
+            }
+            newNode.next = beforeKth.next;
+            beforeKth.next = newNode;
+        }
+        
     }
 
     /**
@@ -112,6 +208,26 @@ public class Stack {
      * isEmpty functions. You can use an external stack.
      */
     public void removeBottomK(int K){
+        if (K == 0 || top == null) return;
+        int length = 0;
+        Node temp = top;
+        while (temp != null) {
+            temp = temp.next;
+            length++;
+        }
+        LinkedList list = new LinkedList();
+        Node tempBefore = null;
+        temp = top;
+        for (int i = 0; i < length - K; i++) {
+            tempBefore = temp;
+            temp = temp.next;
+        }
+        if (tempBefore == null) {
+            top = null;
+        } else {
+            tempBefore.next = null;
+        }
+        
     }
 
     /**
@@ -120,6 +236,15 @@ public class Stack {
      * are not allowed to use any stack attributes such as $N$, $top$, $array$ etc.
      */
     public void removeOddIndexed(){
+        Stack external = new Stack();
+        while (!isEmpty())
+            external.push(pop());
+        for (int i = 1; !external.isEmpty(); i++) {
+            Node popped = external.pop();
+            if (i % 2 == 0) {
+                push(new Node(popped.data));
+            }
+        }
     }
 
     /**
@@ -137,5 +262,15 @@ public class Stack {
      * </ol>
      */
     public void rotateStack(int k){
+        Node tail = top;
+        while (tail.next != null) {
+            tail = tail.next;
+        }
+        tail.next = top;
+        for (int i = 0; i < k; i++) {
+            top = top.next;
+            tail = tail.next;
+        }
+        tail.next = null;
     }
 }
