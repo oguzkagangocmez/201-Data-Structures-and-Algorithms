@@ -1,6 +1,5 @@
 package Array;
 
-import List.Node;
 
 public class Stack {
     private Element[] array;
@@ -69,7 +68,16 @@ public class Stack {
      * </ul>
      */
     public boolean checkString(int[] s){
-        return false;
+        Stack external = new Stack(s.length);
+        for (int j : s) {
+            if (j == 1) {
+                external.push(new Element(1));
+            } else if (j == 2) {
+                if (external.isEmpty()) return false;
+                else if (external.pop().getData() != 1) return false;
+            }
+        }
+        return external.isEmpty();
     }
 
     /**
@@ -77,6 +85,17 @@ public class Stack {
      * are sorted. You are only allowed to use pop, push, isEmpty functions.  (Hint: Use external stack).
      */
     public void compress(){
+        Stack external = new Stack(top + 1);
+        external.push(pop());
+        while (!isEmpty()) {
+            Element candidate = pop();
+            if (external.peek().getData() != candidate.getData()) {
+                external.push(candidate);
+            }
+        }
+        while (!external.isEmpty()) {
+            push(external.pop());
+        }
     }
 
     /**
@@ -85,6 +104,14 @@ public class Stack {
      * can assume the destination stack has enough space for insertion. Your method should run in ${\cal O}(N)$ time.
      */
     public void copyPaste(Stack src, int index){
+        int srcLen = src.top + 1;
+        for (int i = top; i >= index; i--) {
+            array[i + srcLen] = array[i];
+        }
+        top += srcLen;
+        for (int i = index; i < index + srcLen; i++) {
+            array[i] = src.array[i - index];
+        }
     }
 
     /**
@@ -92,6 +119,19 @@ public class Stack {
      * any stack methods, just attributes, constructors, getters and setters.
      */
     public void insertAfterLargest(int newValue){
+        int largestValue = Integer.MIN_VALUE;
+        int largestIndex = 0;
+        for (int i = 0; i <= top; i++) {
+            if (array[i].getData() > largestValue) {
+                largestValue = array[i].getData();
+                largestIndex = i;
+            }
+        }
+        for (int i = top; i > largestIndex; i--) {
+            array[i + 1] = array[i];
+        }
+        array[largestIndex + 1] = new Element(newValue);
+        top += 1;
     }
 
     /**
@@ -101,7 +141,16 @@ public class Stack {
      * such as N, top, array etc.
      */
     public static boolean isBalanced(int[] a){
-        return false;
+        Stack external = new Stack(a.length);
+        for (int j : a) {
+            if (0 <= j && j < 10) {
+                external.push(new Element(j));
+            } else if (j > 10) {
+                int expected = j - 10;
+                if (external.isEmpty() || external.pop().getData() != expected) return false;
+            }
+        }
+        return external.isEmpty();
     }
 
     /**
@@ -110,7 +159,12 @@ public class Stack {
      * stacks, just attributes, constructors, getters and setters.
      */
     public Element pop(int k){
-        return null;
+        Element popped = array[top - k + 1];
+        for (int i = top - k + 1; i < top; i++) {
+            array[i] = array[i + 1];
+        }
+        top -= 1;
+        return popped;
     }
 
     /**
@@ -119,6 +173,11 @@ public class Stack {
      * external stacks. You are allowed to use attributes, constructors, getters and setters.
      */
     public void push(int k, int data){
+        for (int i = top; i > top - k + 1; i--) {
+            array[i + 1] = array[i];
+        }
+        array[top - k + 2] = new Element(data);
+        top += 1;
     }
 
     /**
@@ -127,6 +186,17 @@ public class Stack {
      * are not allowed to use any stack attributes such as N, top, array etc.
      */
     public void removeEvenIndexed(){
+        Stack external = new Stack(N);
+        while (!isEmpty()) {
+            external.push(pop());
+        }
+        int indexFromBottom = 1;
+        for (int i = 1; !external.isEmpty(); i++) {
+            Element candidate = external.pop();
+            if (i % 2 == 1) {
+                push(candidate);
+            }
+        }
     }
 
     /**
@@ -144,6 +214,26 @@ public class Stack {
      * </ol>
      */
     public void removeBetweenMinMax(){
+        int largestVal = Integer.MIN_VALUE;
+        int largestIndex = 0;
+        int minVal = Integer.MAX_VALUE;
+        int minIndex = 0;
+        for (int i = 0; i <= top; i++) {
+            if (array[i].getData() > largestVal) {
+                largestVal = array[i].getData();
+                largestIndex = i;
+            }
+            if (array[i].getData() < minVal) {
+                minVal = array[i].getData();
+                minIndex = i;
+            }
+        }
+        int shift = Math.abs(largestIndex - minIndex) - 1;
+
+        for (int i = Math.max(largestIndex, minIndex); i <= top; i++) {
+            array[i - shift] = array[i];
+        }
+        top -= shift;
     }
 
 }
