@@ -1,5 +1,7 @@
 package Array;
 
+import java.util.Arrays;
+
 public class Queue {
 
     private Element[] array;
@@ -63,6 +65,23 @@ public class Queue {
      * from the queues). You are not allowed to use enqueue, dequeue, isEmpty functions.
      */
     public Queue(Queue[] list){
+        if (list == null) return;
+        first = 0;
+        last = 0;
+        // to hold the # of the elements in a queue. assuming every queue has same size.
+        int column = (list[0].last - list[0].first + list[0].N) % list[0].N;
+        N = list.length * column + 1;
+        array = new Element[N];
+        
+        for (int j = 0; j < column; j++) {
+            for (Queue queue : list) {
+                if (!((last + 1) % N == first)) {
+                    array[last] = new Element(queue.array[queue.first + j].getData());
+                    last = (last + 1) % N;
+                }
+            }
+        }
+        
     }
 
     /**
@@ -72,6 +91,15 @@ public class Queue {
      * for opening up space for the elements of src.
      */
     public void copyPaste(Queue src, int index){
+        int srcLen = (src.last - src.first + src.N) % src.N;
+        int numOfShift = (last - index + N) % N;
+        for (int i = 0; i < numOfShift; i++) {
+            array[(last - i - 1 + srcLen + N) % N] = array[(last - i - 1 + N) % N];
+        }
+        for (int i = 0; i < srcLen; i++) {
+            array[(first + index + i) % N] = new Element(src.array[(src.first + i) % src.N].getData());
+        }
+        last = last + srcLen % N;
     }
 
     /**
@@ -80,6 +108,19 @@ public class Queue {
      * queue has enough space for insertion. Your method should run in ${\cal O}(N)$ time.
      */
     public void cutPaste(Queue dest, int p, int q){
+        int numToAdd = (q - p + N + 1) % N;
+        for (int i = 0; i < numToAdd; i++) {
+            dest.array[dest.last] = array[(first + i + p) % N];
+            dest.last = (dest.last + 1) % dest.N;
+        }
+        int numToCut = (q - p + 1 + N) % N;
+        for (int i = 0; i < numToCut; i++) {
+            array[(first + p + i) % N] = array[(first + q + i + 1) % N];
+        }
+        last = (last - numToCut + N) % N;
+        for (int i = last; array[i] != null; i = (i + 1) % N) {
+            array[i] = null;
+        }
     }
 
     /**
@@ -87,8 +128,15 @@ public class Queue {
      * dequeue, that is, the first element has index 1. You are not allowed to use any queue methods and any external
      * structures (arrays, queues, trees, etc). You are allowed to use attributes, constructors, getters and setters.
      */
-    public Element dequeue(int k){
-        return null;
+    public Element dequeue(int k){ // todo
+        int indexToDequeue = (first + k - 1 + N) % N;
+        Element dequeued = array[indexToDequeue];
+        int numOfShift = (indexToDequeue - first + N) % N;
+        for (int i = 0; i < numOfShift; i++) {
+            array[(indexToDequeue - i + N) % N] = array[(indexToDequeue - i - 1 + N) % N];
+        }
+        first = (first + 1) % N;
+        return dequeued;
     }
 
     /**
@@ -96,7 +144,10 @@ public class Queue {
      * time. Do not use any class or external methods except isEmpty().
      */
     public Element dequeue2nd(){
-        return null;
+        Element second = array[(first + 1) % N];
+        array[(first + 1) % N] = array[first];
+        first = (first + 1) % N;
+        return second;
     }
 
     /**
@@ -104,8 +155,31 @@ public class Queue {
      * and inserting into the newly created queue. The first node has index 1. You are not allowed to use any queue or
      * linked list methods, just attributes, constructors, getters and setters.
      */
-    public Queue divideQueue(){
-        return null;
+    public Queue divideQueue() {
+        Queue odd = new Queue(N);
+        Queue even = new Queue(N);
+        int len = (last - first + N) % N;
+        int toRemove = ((last - first + N) % N) / 2;
+        int deletion = 0;
+        for (int i = 1; i <= len; i++) {
+            if (i % 2 == 0) {
+                if (!((even.last + 1) % even.N == even.first)) {
+                    even.array[even.last] = array[(first + i - 1 + N) % N];
+                    even.last = (even.last + 1) % even.N;
+                }
+            } else {
+                if (!((odd.last + 1) % odd.N == odd.first)) {
+                    odd.array[odd.last] = array[(first + i - 1 + N) % N];
+                    odd.last = (odd.last + 1) % odd.N;
+                }
+            }
+        }
+        this.array = odd.array;
+        this.first = odd.first;
+        this.last = odd.last;
+        this.N = odd.N;
+        
+        return even;
     }
 
     /**
@@ -113,6 +187,22 @@ public class Queue {
      * implementation. You are not allowed to use any queue methods, just attributes, constructors, getters and setters.
      */
     public void insertAfterLargest (int data){
+        Element newElement = new Element(data);
+        int largestIndex = 0, largestValue = Integer.MIN_VALUE;
+        for (int i = first ; array[i] != null; i = (i + 1) % N) {
+            if (array[i].getData() > largestValue) {
+                largestValue = array[i].getData();
+                largestIndex = i;
+            }
+        }
+        
+        int numOfShift = (last - 1 - largestIndex + N) % N;
+        for (int i = 0; i < numOfShift; i++) {
+            array[(last - i + N) % N] = array[(last - 1 - i + N) % N];
+        }
+        
+        array[(largestIndex + 1) % N] = newElement;
+        last = (last + 1) % N;
     }
 
     /**
@@ -121,6 +211,16 @@ public class Queue {
      * You are not allowed to use any queue attributes such as first, last, array etc.
      */
     public void removeOddIndexed(){
+        Queue evenIndexed = new Queue((((last - first + N) % N) / 2) + 1);
+        for (int i = 1; !isEmpty(); i++) {
+            Element candidate = dequeue();
+            if (i % 2 == 0) {
+                evenIndexed.enqueue(candidate);
+            }
+        }
+        while (!evenIndexed.isEmpty()) {
+            enqueue(evenIndexed.dequeue());
+        }
     }
 
     /**
@@ -131,6 +231,12 @@ public class Queue {
      * the number of elements in the queue. Assume that $k \leq N$.
      */
     public void rotateQueue(int k){
+        int indexToRotate = (first + k) % N;
+        for (int i = 0; i < k; i++) {
+            array[(last + i) % N] = array[(first + i) % N];
+        }
+        last = (last + k) % N;
+        first = (first + k) % N;
     }
 
     /**
@@ -147,7 +253,24 @@ public class Queue {
      * each queue is same and even.
      */
     public static Queue QueueZigZag(Queue[] list){
-        return null;
+        int row = list.length;
+        int column = (list[0].last - list[0].first + list[0].N) % list[0].N;
+        Queue result = new Queue(row * column + 1);
+        
+        for (int i = 0; i < column / 2; i++) {
+            for (Queue queue : list) {
+                int leftRowIndex = (queue.first + i + queue.N) % queue.N;
+                result.array[result.last] = new Element((queue.array[leftRowIndex]).getData());
+                result.last = result.last + 1 % result.N;
+            }
+            
+            for (Queue queue : list) {
+                int rightRowIndex = (queue.last - 1 - i + queue.N) % queue.N;
+                result.array[result.last] = new Element((queue.array[rightRowIndex]).getData());
+                result.last = result.last + 1 % result.N;
+            }
+        }
+        return result;
     }
 
 }
