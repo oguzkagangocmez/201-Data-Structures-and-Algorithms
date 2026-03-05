@@ -2,7 +2,7 @@ package Tree;
 
 public class Queue {
 
-    private Element array[];
+    private TreeNode array[];
 
     private int first;
 
@@ -12,7 +12,7 @@ public class Queue {
 
     public Queue(int N){
         this.N = N;
-        array = new Element[N];
+        array = new TreeNode[N];
         first = 0;
         last = 0;
     }
@@ -25,16 +25,16 @@ public class Queue {
         return first == last;
     }
 
-    void enqueue(Element element){
+    void enqueue(TreeNode TreeNode){
         if (!isFull()){
-            array[last] = element;
+            array[last] = TreeNode;
             last = (last + 1) % N;
         }
     }
 
-    Element dequeue(){
+    TreeNode dequeue(){
         if (!isEmpty()){
-            Element tmp = array[first];
+            TreeNode tmp = array[first];
             first = (first + 1) % N;
             return tmp;
         }
