@@ -1,13 +1,13 @@
 package Tree;
 
 public class Stack {
-    private Element[] array;
+    private TreeNode[] array;
     private int top;
     private int N;
 
     public Stack(int N){
         this.N = N;
-        array = new Element[N];
+        array = new TreeNode[N];
         top = -1;
     }
 
@@ -19,18 +19,18 @@ public class Stack {
         return top == -1;
     }
 
-    Element peek(){
+    TreeNode peek(){
         return array[top];
     }
 
-    void push(Element element){
+    void push(TreeNode TreeNode){
         if (!isFull()){
             top++;
-            array[top] = element;
+            array[top] = TreeNode;
         }
     }
 
-    Element pop(){
+    TreeNode pop(){
         if (!isEmpty()){
             top--;
             return array[top + 1];
