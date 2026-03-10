@@ -61,7 +61,20 @@ public class Tree {
      * (iiii) The smallest number is the root.)
      */
     public String bottomTwo(){
-        return "";
+        if (root == null) return "";
+        TreeNode prev = null;
+        TreeNode temp = root;
+        
+        while (temp != null && temp.left != null) {
+            prev = temp;
+            temp = temp.left;
+        }
+        if (temp.right != null) {
+            prev = temp;
+            temp = temp.right;
+        }
+        
+        return Math.min(prev.data, temp.data) + " " + Math.max(prev.data, temp.data);
     }
 
     /**
@@ -69,7 +82,16 @@ public class Tree {
      * values in a binary search tree by using queue. You are only allowed to traverse the tree once.
      */
     public int countEvenNodes(){
-        return 0;
+        int even = 0;
+        Queue queue = new Queue(1000);
+        queue.enqueue(root);
+        while (!queue.isEmpty()) {
+            TreeNode candidate = queue.dequeue();
+            if (candidate.data % 2 == 0) even++;
+            if (candidate.left != null) queue.enqueue(candidate.left);
+            if (candidate.right != null) queue.enqueue(candidate.right);
+        }
+        return even;
     }
 
     /**
@@ -78,14 +100,31 @@ public class Tree {
      * setters. Depth of the root node is 1.
      */
     public int depthOfNode(int X){
-        return 0;
+        int depth = 1;
+        TreeNode temp = root;
+        while (temp != null && temp.data != X) {
+            if (temp.data < X) {
+                if (temp.right != null) temp = temp.right;
+            } else if (temp.data > X){
+                if (temp.left != null) temp = temp.left;
+            }
+            depth++;
+        }
+        return depth;
     }
 
     /**
      * T1 and T2 are two binary trees. Write the recursive method in Tree class to determine if T1 is identical to T2.
      */
     public boolean isIdentical(TreeNode T1, TreeNode T2){
-        return false;
+        if (T1 == null && T2 == null) return true;
+        if (T1 == null || T2 == null) return false;
+        if (T1.data != T2.data) return false;
+        
+        boolean leftSearch = isIdentical(T1.left, T2.left);
+        boolean rightSearch = isIdentical(T1.right, T2.right);
+        
+        return leftSearch && rightSearch;
     }
 
     /**
@@ -93,7 +132,18 @@ public class Tree {
      * rightist nodes in a binary search tree. A node is leftist~(rightist) if it has only left~(right) child.
      */
     public int leftistOrRightist(){
-        return 0;
+        Stack stack = new Stack(1000);
+        stack.push(root);
+        int leftist = 0, rightist = 0;
+        while (!stack.isEmpty()) {
+            TreeNode cd = stack.pop();
+            if (cd.left == null && cd.right != null) rightist++;
+            if (cd.left != null && cd.right == null) leftist++;
+            
+            if (cd.left != null) stack.push(cd.left);
+            if (cd.right != null) stack.push(cd.right);
+        }
+        return leftist - rightist;
     }
 
     /**
@@ -102,7 +152,25 @@ public class Tree {
      * should contain only that many items not more not less.
      */
     public int[] pathList(){
-        return null;
+        if (root == null) return null;
+        int[] path = new int[0];
+        TreeNode temp = root;
+        while (temp != null) {
+            int [] newPath = new int[path.length + 1];
+            for (int i = 0; i < path.length; i++) {
+                newPath[i] = path[i];
+            }
+            newPath[path.length] = temp.data;
+            path = newPath;
+            if (temp.data % 2 == 0) {
+                if (temp.right != null) temp = temp.right;
+                else break;
+            } else {
+                if (temp.left != null) temp = temp.left;
+                else break;
+            }
+        }
+        return path;
     }
 
     /**
@@ -110,7 +178,16 @@ public class Tree {
      * using stack.
      */
     public int product(){
-        return 0;
+        Stack stack = new Stack(1000);
+        stack.push(root);
+        int product = 1;
+        while (!stack.isEmpty()) {
+            TreeNode cd = stack.pop();
+            product *= cd.data;
+            if (cd.left != null) stack.push(cd.left);
+            if (cd.right != null) stack.push(cd.right);
+        }
+        return product;
     }
 
     /**
@@ -130,7 +207,19 @@ public class Tree {
      * function in strings.
      */
     public int sumOfPath(String path){
-        return 0;
+        if (root == null) return 0;
+        TreeNode temp = root;
+        int sum = temp.data;
+        for (int i = 0; i < path.length() && temp != null; i++) {
+            if (path.charAt(i) == '0') {
+                if (temp.left != null) temp = temp.left;
+            } else if (path.charAt(i) == '1') {
+                if (temp.right != null) temp = temp.right;
+            } else break;
+            if (temp == null) break;
+            sum += temp.data;
+        }
+        return sum;
     }
 
     /**
@@ -138,7 +227,16 @@ public class Tree {
      * tree by using queue. You are only allowed to traverse the tree once. You may assume tree has at least 1 node.
      */
     public int countOddNodes(){
-        return 0;
+        int odd = 0;
+        Queue queue = new Queue(1000);
+        queue.enqueue(root);
+        while (!queue.isEmpty()) {
+            TreeNode candidate = queue.dequeue();
+            if (candidate.data % 2 == 1) odd++;
+            if (candidate.left != null) queue.enqueue(candidate.left);
+            if (candidate.right != null) queue.enqueue(candidate.right);
+        }
+        return odd;
     }
 
 }
