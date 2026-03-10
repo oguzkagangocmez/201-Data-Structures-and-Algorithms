@@ -48,10 +48,10 @@ public class TestListHash {
         hash1 = new Hash(17);
         hash1.insertArray(new int[]{1, 2, 3, 4, 5, 6, 8});
         assertTrue(hash1.isValid());
-        hash1 = new Hash(7);
+        hash1 = new Hash(17);
         hash1.insertArray(new int[]{1, 2, 2, 1, 2, 3, 1, 2, 1, 2});
         assertFalse(hash1.isValid());
-        hash1 = new Hash(5);
+        hash1 = new Hash(15);
         hash1.insertArray(new int[]{1, 3, 5, 7, 8, 2, 4, 6});
         assertTrue(hash1.isValid());
     }
