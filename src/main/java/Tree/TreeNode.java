@@ -1,6 +1,9 @@
 package Tree;
 
+import Array.Element;
+import Array.Queue;
 import List.LinkedList;
+import List.Node;
 
 public class TreeNode {
 
@@ -52,7 +55,13 @@ public class TreeNode {
      * nodes in queue. For queue, you are only allowed to use enqueue function. You should use array  implementation
      * for the queue in this question.
      */
-    public void accumulateLeafNodes(Array.Queue queue){
+    public void accumulateLeafNodes(Queue queue){
+        if (left != null)
+            left.accumulateLeafNodes(queue);
+        if (right != null)
+            right.accumulateLeafNodes(queue);
+        if (left == null && right == null)
+            queue.enqueue(new Element(data));
     }
 
     /**
@@ -60,7 +69,15 @@ public class TreeNode {
      * (left and right children must exist).
      */
     public boolean averageOfItsChildren(){
-        return false;
+        if (left != null && right != null) {
+            if (((double)left.data + right.data) / 2 == data) {
+                return true;
+            }
+        }
+        boolean leftSearch = left != null && left.averageOfItsChildren();
+        boolean rightSearch = right != null && right.averageOfItsChildren();
+        
+        return leftSearch || rightSearch;
     }
 
     /**
@@ -68,7 +85,17 @@ public class TreeNode {
      * following property: The node's key is the average of its children (left and right children).
      */
     public int averages(){
-        return 0;
+        int count = 0;
+        if (left != null && right != null) {
+            if (((double)left.data + right.data) / 2 == data) {
+                count++;
+            }
+        }
+        if (left != null)
+            count += left.averages();
+        if (right != null)
+            count += right.averages();
+        return count;
     }
 
     /**
@@ -76,7 +103,30 @@ public class TreeNode {
      * manner. You are not allowed to use any tree methods.
      */
     public int[] collectNodes(){
-        return null;
+        // sorted manner = inorder traversal
+        int[] leftArr;
+        if (left != null) {
+            leftArr = left.collectNodes();
+        } else {
+            leftArr = new int[0];
+        }
+        int[] rightArr;
+        if (right != null) {
+            rightArr = right.collectNodes();
+        } else {
+            rightArr = new int[0];
+        }
+        
+        int[] arr = new int[leftArr.length + 1 + rightArr.length];
+        for (int i = 0; i < leftArr.length; i++) {
+            arr[i] = leftArr[i];
+        }
+        arr[leftArr.length] = data;
+        for (int i = 0; i < rightArr.length; i++) {
+            arr[leftArr.length + 1 + i] = rightArr[i];
+        }
+        
+        return arr;
     }
 
     /**
@@ -86,7 +136,18 @@ public class TreeNode {
      * create an extra array to forward reduced path to the children.
      */
     public boolean hasPath(int[] path){
-        return false;
+        if (path[0] != data) return false;
+        else if (path.length == 1) return true;
+        else {
+            int[] newPath = new int[path.length - 1];
+            for (int i = 0; i < path.length - 1; i++) {
+                newPath[i] = path[i + 1];
+            }
+            path = newPath;
+            boolean leftSearch = left != null && left.hasPath(path);
+            boolean rightSearch = right != null && right.hasPath(path);
+            return leftSearch || rightSearch;
+        }
     }
 
     /**
@@ -95,7 +156,19 @@ public class TreeNode {
      * the number of nodes which have value larger than $X$ in the tree. Do not use any class or external methods.
      */
     public int higherThanX(int X){
-        return 0;
+        int count = 0;
+        if (data <= X) {
+            if (right != null)
+                count += right.higherThanX(X);
+            else return count;
+        } else {
+            count = 1;
+            if (left != null)
+                count += left.higherThanX(X);
+            if (right != null)
+                count += right.higherThanX(X);
+        }
+        return count;
     }
 
     /**
@@ -103,7 +176,11 @@ public class TreeNode {
      * binary tree is a mirror of itself (symmetric). You may not use any additional data structure or array.
      */
     public boolean isMirror(TreeNode left, TreeNode right){
-        return false;
+        if (left == null && right == null) return true;
+        if (left == null || right == null) return false;
+        if (left.data != right.data) return false;
+        
+        return isMirror(left.left, right.right) && isMirror(left.right, right.left);
     }
 
     /**
@@ -115,7 +192,14 @@ public class TreeNode {
      * </ul>
      */
     public int leftist(){
-        return 0;
+        int count = 0;
+        if (left != null && right != null) {
+            if (left.data > right.data) count++;
+        }
+        if (left != null && right == null) count++;
+        if (left != null) count += left.leftist();
+        if (right != null) count += right.leftist();
+        return count;
     }
 
     /**
@@ -125,7 +209,36 @@ public class TreeNode {
      * method should concatenate them)
      */
     public int[] lessThanX(int x){
-        return null;
+        if (data < x) {
+            // sorted manner = inorder traversal
+            int[] leftArr;
+            if (left != null) {
+                leftArr = left.lessThanX(x);
+            } else {
+                leftArr = new int[0];
+            }
+            int[] rightArr;
+            if (right != null) {
+                rightArr = right.lessThanX(x);
+            } else {
+                rightArr = new int[0];
+            }
+            
+            int[] arr = new int[leftArr.length + 1 + rightArr.length];
+            for (int i = 0; i < leftArr.length; i++) {
+                arr[i] = leftArr[i];
+            }
+            arr[leftArr.length] = data;
+            for (int i = 0; i < rightArr.length; i++) {
+                arr[leftArr.length + 1 + i] = rightArr[i];
+            }
+            
+            return arr;
+        } else {
+            if (left != null)
+                return left.lessThanX(x);
+            else return new int[0];
+        }
     }
 
     /**
@@ -133,8 +246,35 @@ public class TreeNode {
      * Assume that if a key is duplicate, it occurs at most twice. Hint: The duplicate of a key is either the maximum
      * number on its left subtree or the minimum number on its right subtree.
      */
-    public int numberOfDuplicates(){
-        return 0;
+    public int numberOfDuplicates(){ // TODO
+        int duplicate = 0;
+
+        if (left != null) {
+            TreeNode temp = left;
+            while (temp.right != null) {
+                temp = temp.right;
+            }
+            if (temp.data == data) {
+                duplicate++;
+            }
+        }
+
+        if (right != null) {
+            TreeNode temp = right;
+            while (temp.left != null) {
+                temp = temp.left;
+            }
+            if (temp.data == data) {
+                duplicate++;
+            }
+        }
+
+        if (left != null)
+            duplicate += left.numberOfDuplicates();
+        if (right != null)
+            duplicate += right.numberOfDuplicates();
+
+        return duplicate;
     }
 
     /**
@@ -143,13 +283,31 @@ public class TreeNode {
      * Assume that the function is called with an empty linked list for the root node.
      */
     public void pathToLinkedList(LinkedList l){
+        TreeNode temp = this;
+        while (temp != null) {
+            l.insertLast(new Node(temp.data));
+            if (temp.data % 2 == 0) {
+                if (right != null)
+                    temp = temp.right;
+                else return;
+            } else {
+                if (left != null)
+                    temp = temp.left;
+                else return;
+            }
+        }
     }
 
     /**
      * Write a method that computes the products of all keys in a binary search tree.
      */
     public int productOfTree(){
-        return 0;
+        int product = data;
+        if (left != null)
+            product *= left.productOfTree();
+        if (right != null)
+            product *= right.productOfTree();
+        return product;
     }
 
     /**
@@ -158,7 +316,24 @@ public class TreeNode {
      * less than q in the tree.
      */
     public int sumOfNodesBetween(int p, int q){
-        return 0;
+        int sum = 0;
+        if (data <= p) {
+            if (right != null)
+                sum += right.sumOfNodesBetween(p, q);
+            else return sum;
+        } else if (data < q) {
+            sum = data;
+            if (left != null)
+                sum += left.sumOfNodesBetween(p, q);
+            if (right != null)
+                sum += right.sumOfNodesBetween(p, q);
+            else return sum;
+        } else {
+            if (left != null)
+                sum += left.sumOfNodesBetween(p, q);
+            else return sum;
+        }
+        return sum;
     }
 
     /**
@@ -166,7 +341,14 @@ public class TreeNode {
      * search tree. You are not allowed to use any tree methods, just attributes, constructors, getters and setters.
      */
     public int sumOfTree(int X){
-        return 0;
+        int sum = 0;
+        if (data < X)
+            sum += data;
+        if (left != null)
+            sum += left.sumOfTree(X);
+        if (right != null)
+            sum += right.sumOfTree(X);
+        return sum;
     }
 
     /**
@@ -175,13 +357,29 @@ public class TreeNode {
      * for all non-leaf nodes.
      */
     public int greaterThanChildren(){
-        return 0;
+        int count = 0;
+        if (left != null && right != null) {
+            if (data > ((double)left.data + right.data) / 2)
+                count++;
+        }
+        if (left != null)
+            count += left.greaterThanChildren();
+        if (right != null)
+            count += right.greaterThanChildren();
+        return count;
     }
 
     /**
      *  Write a recursive method in TreeNode class that computes the sum of quadratic powers of
      * all keys in a binary search tree.
      */
-    public int quadraticSummation() { return 0;}
+    public int quadraticSummation() {
+        int sum = data * data;
+        if (left != null)
+            sum += left.quadraticSummation();
+        if (right != null)
+            sum += right.quadraticSummation();
+        return sum;
+    }
 
 }
