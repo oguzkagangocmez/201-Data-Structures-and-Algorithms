@@ -246,7 +246,7 @@ public class TreeNode {
      * Assume that if a key is duplicate, it occurs at most twice. Hint: The duplicate of a key is either the maximum
      * number on its left subtree or the minimum number on its right subtree.
      */
-    public int numberOfDuplicates(){ // TODO
+    public int numberOfDuplicates(){
         int duplicate = 0;
 
         if (left != null) {
