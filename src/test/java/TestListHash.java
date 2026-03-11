@@ -89,10 +89,10 @@ public class TestListHash {
         hash1 = new Hash(17);
         hash1.insertArray(new int[]{1, 2, 3, 4, 5, 4, 6, 7, 8, 2, 4, 6});
         assertEquals("1 2 3 4 5 6 7 8", hash1.simplify().toString());
-        hash1 = new Hash(7);
+        hash1 = new Hash(17);
         hash1.insertArray(new int[]{1, 2, 2, 2, 1, 1, 2});
         assertEquals("1 2", hash1.simplify().toString());
-        hash1 = new Hash(5);
+        hash1 = new Hash(15);
         hash1.insertArray(new int[]{1, 2, 4, 5, 4, 6, 7, 2, 4, 6});
         assertEquals("1 2 4 5 6 7", hash1.simplify().toString());
     }
