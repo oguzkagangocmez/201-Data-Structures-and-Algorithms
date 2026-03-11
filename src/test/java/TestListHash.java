@@ -137,6 +137,9 @@ public class TestListHash {
         assertFalse(Hash.sumOfThreeK(new int[]{1, 2, 3}, 5));
         assertFalse(Hash.sumOfThreeK(new int[]{1, 2, 3, 9}, 15));
         assertTrue(Hash.sumOfThreeK(new int[]{1, 2, 3, 4}, 9));
+        assertFalse(Hash.sumOfThreeK(new int[]{1,4,7}, 11));
+        assertTrue(Hash.sumOfThreeK(new int[]{1,4,7}, 12));
+        assertTrue(Hash.sumOfThreeK(new int[]{3,3,3}, 9));
     }
 
 }
