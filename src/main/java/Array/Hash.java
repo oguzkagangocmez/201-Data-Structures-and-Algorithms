@@ -1,5 +1,7 @@
 package Array;
 
+import java.util.Arrays;
+
 public class Hash {
 
     private Element[] table;
@@ -64,6 +66,14 @@ public class Hash {
      * to use any methods and external data structures we learned in the class.
      */
     public static boolean anyDuplicate(int[] array){
+        int maxValue = Integer.MIN_VALUE;
+        for (int v : array) if (v > maxValue) maxValue = v;
+        Hash hash = new Hash(maxValue + 1);
+        for (int val : array){
+            if (hash.search(val) == null)
+                hash.insert(val);
+            else return true;
+        }
         return false;
     }
 
@@ -73,6 +83,12 @@ public class Hash {
      * use any class or external methods except hashFunction.
      */
     public void deleteAll(int X){
+        for (int i = 0; i < N; i++) {
+            if (!deleted[i] && table[i] != null) {
+                if (table[i].getData() == X)
+                    deleted[i] = true;
+            }
+        }
     }
 
     /**
@@ -81,6 +97,16 @@ public class Hash {
      * \textbf{at most one} external hash. Hint: You must store pairwise sums in the external hash table.
      */
     public static boolean equalPairSums(int[] array){
+        Hash hash = new Hash((int) Math.pow(array.length, 4));
+        for (int v : array)
+            hash.insert(v);
+        
+        for (int i = 0; i < array.length; i++) {
+            for (int j = i + 1; j < array.length; j++) {
+                int sum = array[i] + array[j];
+                if (hash.search(sum) != null) return true;
+            }
+        }
         return false;
     }
 
@@ -91,7 +117,12 @@ public class Hash {
      * external methods except hashFunction.
      */
     public int hashFunctionItSelf(){
-        return 0;
+        int sum = 0;
+        for (int i = 0; i < table.length; i++) {
+            if (!deleted[i] && table[i] != null)
+                sum += table[i].getData();
+        }
+        return sum % N;
     }
 
     /**
@@ -100,7 +131,15 @@ public class Hash {
      * Use hashing.
      */
     public static int numberOfExtras(int[] array){
-        return 0;
+        Hash hash = new Hash(array.length);
+        int unique = 0;
+        for (int v : array) {
+            if (hash.search(v) == null) {
+                hash.insert(v);
+                unique++;
+            }
+        }
+        return array.length - unique;
     }
 
     /**
@@ -108,7 +147,25 @@ public class Hash {
      * elements in the array.
      */
     public int numberOfClusters() {
-        return 0;
+        int numOfCluster = 0;
+        boolean isInCluster = false;
+        
+        for (int i = 0; i < table.length; i++) {
+            if (!deleted[i]) {
+                if (table[i] != null) {
+                     if (!isInCluster) {
+                         isInCluster = true;
+                         numOfCluster++;
+                     }
+                } else {
+                    isInCluster = false;
+                }
+            } else {
+                isInCluster = false;
+            }
+        }
+        
+        return numOfCluster;
     }
 
     /**
@@ -119,7 +176,12 @@ public class Hash {
      * </ol>
      */
     public Hash simplify(){
-        return null;
+        Hash simple = new Hash(N);
+        for (int i = 0; i < table.length; i++) {
+            if (!deleted[i] && table[i] != null && simple.search(table[i].getData()) == null)
+                simple.insert(table[i].getData());
+        }
+        return simple;
     }
 
     /**
@@ -130,7 +192,39 @@ public class Hash {
      * than that.
      */
     public static int[] sortByHashing(int[] array){
-        return null;
+        int[] sorted = new int[array.length];
+        if (array.length == 0) {
+            return sorted;
+        }
+
+        int maxValue = Integer.MIN_VALUE;
+        for (int value : array) {
+            if (value > maxValue) {
+                maxValue = value;
+            }
+        }
+
+        Hash hash = new Hash(maxValue + 1);
+
+        for (int value : array) {
+            if (hash.table[value] == null) {
+                hash.table[value] = new Element(1);
+            } else {
+                hash.table[value] = new Element(hash.table[value].getData() + 1);
+            }
+        }
+
+        int index = 0;
+        for (int value = 0; value <= maxValue; value++) {
+            if (hash.table[value] != null) {
+                int count = hash.table[value].getData();
+                for (int i = 0; i < count; i++) {
+                    sorted[index++] = value;
+                }
+            }
+        }
+
+        return sorted;
     }
 
     /**
@@ -140,6 +234,16 @@ public class Hash {
      * use at most one external hash.
      */
     public static boolean equalPairDiffs(int[] array){
+        Hash hash = new Hash((int) Math.pow(array.length, 4));
+        
+        for (int i = 0; i < array.length; i++) {
+            for (int j = i + 1; j < array.length; j++) {
+                int diff = Math.abs(array[i] - array[j]);
+                if (hash.search(diff) != null) return true;
+                else hash.insert(diff);
+            }
+        }
+        
         return false;
     }
 
