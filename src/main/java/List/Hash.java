@@ -51,6 +51,27 @@ public class Hash {
      * in the hash table. Do not use any class or external methods except hashFunction.
      */
     public void deleteAll(int X){
+        int address = X % N;
+        LinkedList list = table[address];
+        while (list.head.data == X) {
+            Node temp = list.head;
+            Node newHead = temp.next;
+            temp.next = null;
+            list.head = newHead;
+            if (list.head == null) return;
+        }
+        Node prev = list.head;
+        Node runner = prev.next;
+        while (runner != null) {
+            if (runner.data == X) {
+                prev.next = runner.next;
+                runner.next = null;
+                runner = prev.next;
+            } else {
+                prev = runner;
+                runner = runner.next;
+            }
+        }
     }
 
     /**
@@ -61,7 +82,23 @@ public class Hash {
      * \textbf{at most one} external hash.
      */
     public static int[] difference(int[] list1, int[] list2){
-        return null;
+        Hash hash2 = new Hash(list1.length * 2);
+        for (int v : list2)
+            if (hash2.search(v) == null)
+                hash2.insert(v);
+        
+        int[] difference = new int[0];
+        for (int v : list1) {
+            if (hash2.search(v) == null) {
+                int [] newDiff = new int[difference.length + 1];
+                for (int i = 0; i < difference.length; i++) {
+                    newDiff[i] = difference[i];
+                }
+                newDiff[difference.length] = v;
+                difference = newDiff;
+            }
+        }
+        return difference;
     }
 
     /**
@@ -72,7 +109,24 @@ public class Hash {
      * second list in ${\cal O}(1)$?
      */
     public static int[] intersection(int[] list1, int[] list2){
-        return null;
+        Hash hash = new Hash(list1.length + list2.length + 1);
+        for (int v : list2)
+            if (hash.search(v) == null)
+                hash.insert(v);
+        
+        int [] intersect = new int[0];
+        
+        for (int v : list1) {
+            if (hash.search(v) != null) {
+                int[] newIntersect = new int[intersect.length + 1];
+                for (int i = 0; i < intersect.length; i++)
+                    newIntersect[i] = intersect[i];
+                newIntersect[intersect.length] = v;
+                intersect = newIntersect;
+            }
+        }
+        
+        return intersect;
     }
 
     /**
@@ -81,7 +135,21 @@ public class Hash {
      * external data structures or hash tables.
      */
     public boolean isValid(){
-        return false;
+        for (int i = 0; i < table.length; i++) {
+            if (table[i].head == table[i].tail) continue;
+            else {
+                Node ref = table[i].head;
+                while (ref != null) {
+                    Node scanner = ref.next;
+                    while (scanner != null) {
+                        if (scanner.data == ref.data) return false;
+                        scanner = scanner.next;
+                    }
+                    ref = ref.next;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -89,7 +157,22 @@ public class Hash {
      * there will be no collisions at all. Use an external linked list based hash table for checking collisions.
      */
     public static int minTableSize(int[] numbers){
-        return 0;
+        int start = numbers.length;
+        while (true) {
+            Hash hash = new Hash(start);
+            boolean collision = false;
+            for (int num : numbers) {
+                int address = hash.hashFunction(num);
+                if (hash.table[address].head != null) {
+                    collision = true;
+                    break;
+                } else
+                    hash.insert(num);
+            }
+            if (!collision) return start;
+            start++;
+        }
+        
     }
 
     /**
@@ -97,7 +180,8 @@ public class Hash {
      * chaining, otherwise it returns false.
      */
     public boolean perfectMap(){
-        return false;
+        for (LinkedList list : table) if (list.head != list.tail) return false;
+        return true;
     }
 
     /**
@@ -108,7 +192,17 @@ public class Hash {
      * </ol>
      */
     public Hash simplify(){
-        return null;
+        Hash hash = new Hash(table.length);
+        
+        for (LinkedList list : table) {
+            Node temp = list.head;
+            while (temp != null) {
+                if (hash.search(temp.data) == null) hash.insert(temp.data);
+                temp = temp.next;
+            }
+        }
+        
+        return hash;
     }
 
     /**
@@ -117,6 +211,18 @@ public class Hash {
      * external array and an external hash table.
      */
     public static boolean sumOfFourK(int[] array, int K){
+        Hash hash = new Hash(array.length * array.length);
+        
+        for (int i = 0; i < array.length; i++) {
+            for (int j = i + 1; j < array.length; j++) {
+                int sum = array[i] + array[j];
+                int needed = K - sum;
+                if (needed < 0) continue;
+                if (hash.search(needed) != null) return true;
+                else hash.insert(sum);
+            }
+        }
+        
         return false;
     }
 
@@ -126,6 +232,12 @@ public class Hash {
      * structures or arrays except the external hash table.
      */
     public static boolean sumOfTwoK(int[] array, int k){
+        Hash hash = new Hash(array.length + 1);
+        for (int v : array) {
+            int needed = k - v;
+            if (hash.search(needed) != null) return true;
+            else hash.insert(v);
+        }
         return false;
     }
 
@@ -137,7 +249,23 @@ public class Hash {
      * for the array implementation.
      */
     public static int[] symmetricDiff(int[] list1, int[] list2){
-        return null;
+        Hash first = new Hash(list1.length);
+        Hash second = new Hash(list2.length);
+        
+        for (int val : list1) if (first.search(val) == null) first.insert(val);
+        for (int val : list2) if (second.search(val) == null) second.insert(val);
+        
+        int size = 0;
+        for (int val : list1) if (second.search(val) == null) size++;
+        for (int val : list2) if (first.search(val) == null) size++;
+        
+        int[] symDiff = new int[size];
+        int idx = 0;
+        
+        for (int val : list1) if (second.search(val) == null) symDiff[idx++] = val;
+        for (int val : list2) if (first.search(val) == null) symDiff[idx++] = val;
+        
+        return symDiff;
     }
 
     /**
@@ -147,7 +275,23 @@ public class Hash {
      * and an external hash table.
      */
     public static int[] union(int[] list1, int[] list2){
-        return null;
+        Hash hash1 = new Hash(list1.length);
+        Hash hash2 = new Hash(list2.length);
+        
+        for (int val : list1) if (hash1.search(val) == null) hash1.insert(val);
+        for (int val : list2) if (hash2.search(val) == null) hash2.insert(val);
+        
+        int size = 0;
+        for (int val : list1) if (hash1.search(val) != null) size++;
+        for (int val : list2) if (hash1.search(val) == null) size++;
+        
+        int[] union = new int[size];
+        int idx = 0;
+        
+        for (int val : list1) if (hash1.search(val) != null) union[idx++] = val;
+        for (int val : list2) if (hash1.search(val) == null) union[idx++] = val;
+        
+        return union;
     }
 
     /**
@@ -156,7 +300,23 @@ public class Hash {
      * $O(N^2)$ time. Do not use any external data structures or arrays except
      * the external hash table.
      */
-    public static boolean sumOfThreeK(int[] array, int K){
+    public static boolean sumOfThreeK(int[] array, int K) { // FIXME
+        for (int i = 0; i < array.length; i++) {
+            Hash hash = new Hash(array.length + 1);
+
+            for (int j = i + 1; j < array.length; j++) {
+                int needed = K - array[i] - array[j];
+                if (needed < 0) continue;
+                if (hash.search(needed) != null) {
+                    return true;
+                }
+                hash.insert(array[j]);
+            }
+        }
+        
+
         return false;
+        
+        
     }
 }
