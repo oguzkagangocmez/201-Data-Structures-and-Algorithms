@@ -13,7 +13,7 @@ public class TestListGraph {
         Graph graph = new Graph(4,
                 new int[][]{{0, 1}, {0, 2}, {1, 0}, {2, 0}});
         Graph graph2 = new Graph(4,
-                new int[][]{{0, 1}, {1, 2}, {1, 1}, {2, 0}});
+                new int[][]{{0, 1}, {1, 1}, {1, 2}, {2, 0}});
         Graph[] graphs = new Graph[2];
         graphs[0] = graph;
         graphs[1] = graph2;
