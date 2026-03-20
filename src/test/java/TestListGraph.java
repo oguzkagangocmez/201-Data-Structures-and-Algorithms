@@ -63,9 +63,9 @@ public class TestListGraph {
     @Test
     public void testConstructGraphFromNumbers(){
         Graph graph = new Graph(10,
-                new int[][]{{2, 4}, {4, 2}, {6, 3},
-                {3, 6}, {2, 6}, {6, 2}});
-        Graph result = graph.constructGraphFromNumbers(10);
+                new int[][]{{2,4},{2,6},{3,6},{4,2},{4,6},{6,2},{6,3},{6,4}});
+        Graph result = graph.constructGraphFromNumbers(7);
+        System.out.println(result);
         assertEquals(result.toString(), graph.toString());
     }
 
