@@ -102,6 +102,60 @@ public class TestListGraph {
         graph = new Graph(4,
                 new int[][]{{0, 2}, {1, 3}, {2, 3}});
         assertFalse(graph.isBipartite());
+        // 1. Single node
+        assertTrue(new Graph(1, new int[][]{}).isBipartite());
+    
+        // 2. Two nodes connected
+        assertTrue(new Graph(2, new int[][]{{0, 1}}).isBipartite());
+    
+        // 3. Odd cycle (triangle) -> NOT bipartite
+        assertFalse(new Graph(3,
+                new int[][]{{0, 1}, {1, 2}, {2, 0}}).isBipartite());
+    
+        // 4. Even cycle -> bipartite
+        assertTrue(new Graph(4,
+                new int[][]{{0, 1}, {1, 2}, {2, 3}, {3, 0}}).isBipartite());
+    
+        // 5. Disconnected (all good)
+        assertTrue(new Graph(6,
+                new int[][]{{0, 1}, {2, 3}, {4, 5}}).isBipartite());
+    
+        // 6. Disconnected with one odd cycle -> NOT bipartite
+        assertFalse(new Graph(6,
+                new int[][]{
+                        {0, 1}, {1, 2}, {2, 0}, // bad component
+                        {3, 4}
+                }).isBipartite());
+    
+        // 7. Star graph
+        assertTrue(new Graph(5,
+                new int[][]{{0,1}, {0,2}, {0,3}, {0,4}}).isBipartite());
+    
+        // 8. Chain / line
+        assertTrue(new Graph(5,
+                new int[][]{{0,1}, {1,2}, {2,3}, {3,4}}).isBipartite());
+    
+        // 9. Self-loop -> NOT bipartite
+        assertFalse(new Graph(3,
+                new int[][]{{0, 0}, {1, 2}}).isBipartite());
+    
+        // 10. Complete graph K4 -> NOT bipartite
+        assertFalse(new Graph(4,
+                new int[][]{
+                        {0,1},{0,2},{0,3},
+                        {1,2},{1,3},
+                        {2,3}
+                }).isBipartite());
+    
+        // 11. Square + diagonal -> NOT bipartite
+        assertFalse(new Graph(4,
+                new int[][]{
+                        {0,1},{1,2},{2,3},{3,0},
+                        {0,2}
+                }).isBipartite());
+    
+        // 12. Only isolated nodes
+        assertTrue(new Graph(5, new int[][]{}).isBipartite());
     }
 
     @Test
