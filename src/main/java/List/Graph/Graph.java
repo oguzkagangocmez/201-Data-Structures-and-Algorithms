@@ -4,6 +4,8 @@ import General.AbstractGraph;
 import List.Node;
 import List.Queue;
 
+import java.util.Arrays;
+
 public class Graph extends AbstractGraph {
     private EdgeList[] edges;
 
@@ -89,6 +91,27 @@ public class Graph extends AbstractGraph {
      * all graphs have the same size, and the intersections of the graphs are empty.
      */
     public Graph(Graph[] graphs){
+        super(graphs[0].vertexCount); //this line is super important :)
+        this.edges = new EdgeList[graphs[0].vertexCount];
+        
+        for (int i = 0; i < vertexCount; i++)
+            edges[i] = new EdgeList();
+        
+        for (Graph graph : graphs) {
+            if (graph == null) continue;
+            for (int i = 0; i < vertexCount; i++) {
+                Edge current = graph.edges[i].getHead();
+                while (current != null) {
+                    Edge candidate = edges[i].search(current.getTo());
+                    if (candidate == null) {
+                        edges[i].insert(new Edge(i, current.getTo(), current.getWeight()));
+                    }
+                    current = current.getNext();
+                }
+            }
+        }
+        
+    
     }
 
     /**
@@ -96,7 +119,14 @@ public class Graph extends AbstractGraph {
      * list representation.
      */
     public int bidirectionalEdges(){
-        return 0;
+        int bid = 0;
+        
+        for (int i = 0; i < vertexCount; i++) {
+            for (int j = i + 1; j < vertexCount; j++) {
+                if (edges[i].search(j) != null && edges[j].search(i) != null) bid++;
+            }
+        }
+        return bid;
     }
 
     /**
@@ -104,6 +134,25 @@ public class Graph extends AbstractGraph {
      * from the node index1 to index2.
      */
     public boolean breadthFirstSearch(boolean[] visit, int index1, int index2){
+        int fromNode, toNode;
+        Edge edge;
+        Queue queue = new Queue();
+        queue.enqueue(new Node(index1));
+        visit[index1] = true;
+        while (!queue.isEmpty()) {
+            fromNode = queue.dequeue().getData();
+            edge = edges[fromNode].getHead();
+            while (edge != null) {
+                toNode = edge.getTo();
+                if (!visit[toNode]){
+                    visit[toNode] = true;
+                    queue.enqueue(new Node(toNode));
+                    if (toNode == index2) return true;
+                }
+                edge = edge.getNext();
+            }
+        }
+        
         return false;
     }
 
@@ -113,7 +162,19 @@ public class Graph extends AbstractGraph {
      * other than 1.
      */
     public Graph constructGraphFromNumbers(int N){
-        return null;
+        Graph constructed = new Graph(N);
+        for (int i = 0; i < N; i++) {
+            for (int j = i + 1; j < N; j++) {
+                for (int k = 2; k <= i && k <= j; k++) {
+                    if (i % k == 0 && j % k == 0) {
+                        constructed.edges[i].insert(new Edge(i, j, 1));
+                        constructed.edges[j].insert(new Edge(j, i, 1));
+                        break;
+                    }
+                }
+            }
+        }
+        return constructed;
     }
 
     /**
@@ -121,7 +182,24 @@ public class Graph extends AbstractGraph {
      * edges which exist both in the original graph and g2. You may assume both graphs are unweighted.
      */
     public Graph intersection(Graph g2, int v){
-        return null;
+        Graph intersection = new Graph(g2.vertexCount);
+        
+        for (int fromNode = 0; fromNode < vertexCount; fromNode++) {
+            Edge current = edges[fromNode].getHead();
+            while (current != null) {
+                Edge scan = g2.edges[fromNode].getHead();
+                while (scan != null) {
+                    if (scan.getTo() == current.getTo()) {
+                        if (intersection.edges[fromNode].search(scan.getTo()) == null)
+                            intersection.edges[fromNode].insert(new Edge(fromNode, scan.getTo(), scan.getWeight()));
+                    }
+                    scan = scan.getNext();
+                }
+                current = current.getNext();
+            }
+        }
+        
+        return intersection;
     }
 
     /**
@@ -130,7 +208,15 @@ public class Graph extends AbstractGraph {
      * in the original graph. You are not allowed to use extra data structures apart from the constructed graph.
      */
     public Graph inverseGraph(){
-        return null;
+        Graph inverse = new Graph(this.vertexCount);
+        for (int fromNode = 0; fromNode < vertexCount; fromNode++) {
+            for (int toNode = 0; toNode < vertexCount; toNode++) {
+                if (edges[fromNode].search(toNode) == null) {
+                    inverse.edges[fromNode].insert(new Edge(fromNode, toNode, 1));
+                }
+            }
+        }
+        return inverse;
     }
 
     /**
@@ -139,7 +225,32 @@ public class Graph extends AbstractGraph {
      * if the corresponding graph is bipartite or not. Hint: Use Depth or breath first search to traverse the graph.
      */
     public boolean isBipartite(){
-        return false;
+        int[] colors = new int[vertexCount]; // 2 for blues', 1 for reds' coloring
+        
+        for (int i = 0; i < vertexCount; i++) {
+            if (colors[i] != 0) continue;
+            
+            Queue queue = new Queue();
+            queue.enqueue(new Node(i));
+            colors[i] = 2;
+            
+            int fromNode, toNode;
+            Edge edge;
+            while (!queue.isEmpty()) {
+                fromNode = queue.dequeue().getData();
+                edge = edges[fromNode].getHead();
+                while (edge != null) {
+                    toNode = edge.getTo();
+                    if (colors[toNode] == 0) {
+                        colors[toNode] = 3 - colors[fromNode];
+                        queue.enqueue(new Node(toNode));
+                    } else if (colors[fromNode] == colors[toNode]) return false;
+                    edge = edge.getNext();
+                }
+            }
+        }
+        
+        return true;
     }
 
     /**
@@ -148,6 +259,29 @@ public class Graph extends AbstractGraph {
      * checks if the corresponding graph is circular or not.
      */
     public boolean isCircular(){
+        boolean[] visited = new boolean[vertexCount];
+        int start = 0; // all nodes included you can choose whichever you want.
+        
+        Queue queue = new Queue();
+        queue.enqueue(new Node(start));
+        visited[start] = true;
+        
+        int fromNode, toNode; Edge edge;
+        
+        while (!queue.isEmpty()) {
+            fromNode = queue.dequeue().getData();
+            edge = edges[fromNode].getHead();
+            while (edge != null) {
+                toNode = edge.getTo();
+                if (!visited[toNode]) {
+                    queue.enqueue(new Node(toNode));
+                    visited[toNode] = true;
+                } else if (toNode == start) return true;
+                
+                edge = edge.getNext();
+            }
+        }
+        
         return false;
     }
 
@@ -155,7 +289,12 @@ public class Graph extends AbstractGraph {
      * Write a method that checks if the graph is fully connected or not.
      */
     public boolean isFullyConnected(){
-        return false;
+        for (int fromNode = 0; fromNode < vertexCount; fromNode++) {
+            for (int toNode = 0; toNode < vertexCount; toNode++) {
+                if (edges[fromNode].search(toNode) == null) return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -163,7 +302,18 @@ public class Graph extends AbstractGraph {
      * list representation of a graph.
      */
     public boolean isSame(Graph g){
-        return false;
+        Edge edge, gEdge;
+        for (int fromNode = 0; fromNode < vertexCount; fromNode++) {
+            edge = edges[fromNode].getHead();
+            gEdge = g.edges[fromNode].getHead();
+            while (edge != null && gEdge != null) {
+                if (edge.getTo() != gEdge.getTo() && edge.getWeight() != gEdge.getWeight()) return false;
+                edge = edge.getNext();
+                gEdge = gEdge.getNext();
+            }
+            if (edge != null || gEdge != null) return false;
+        }
+        return true;
     }
 
     /**
@@ -172,8 +322,41 @@ public class Graph extends AbstractGraph {
      * both graphs, add the resulting edge with the sum of their weights. You are not allowed to use any linked list
      * methods.
      */
-    public Graph merge(Graph g2, int v){
-        return null;
+    public Graph merge(Graph g2, int v){ // assumed the same number of vertexCount
+        Graph merged = new Graph(vertexCount);
+        
+        for (int fromNode = 0; fromNode < vertexCount; fromNode++) {
+            Edge current = edges[fromNode].getHead();
+            while (current != null) {
+                 Edge scndCur = g2.edges[fromNode].getHead();
+                 int weight = current.getWeight();
+                 
+                 while (scndCur != null) {
+                     if (scndCur.getTo() == current.getTo()) {
+                         weight += scndCur.getWeight();
+                         break;
+                     }
+                     scndCur = scndCur.getNext();
+                 }
+                 merged.edges[fromNode].insert(new Edge(fromNode, current.getTo(), weight));
+                 current = current.getNext();
+            }
+            
+            Edge scndCur = g2.edges[fromNode].getHead();
+            while (scndCur != null) {
+                Edge lookUp = edges[fromNode].getHead();
+                while (lookUp != null) {
+                    if (scndCur.getTo() == lookUp.getTo())
+                        break;
+                    lookUp = lookUp.getNext();
+                }
+                if (lookUp == null)
+                    merged.edges[fromNode].insert(new Edge(fromNode, scndCur.getTo(), scndCur.getWeight()));
+                scndCur = scndCur.getNext();
+            }
+        }
+        
+        return merged;
     }
 
     /**
@@ -182,6 +365,22 @@ public class Graph extends AbstractGraph {
      * sorted. Your method should run in ${\cal O}(V^3)$ time.
      */
     public boolean outgoingListSame(){
+        for (int fromNode = 0; fromNode < vertexCount; fromNode++) {
+            for (int secondFrom = fromNode + 1; secondFrom < vertexCount; secondFrom++) {
+                boolean areAllSequenceSame = true;
+                Edge first = edges[fromNode].getHead();
+                Edge second = edges[secondFrom].getHead();
+                while (first != null && second != null) {
+                    if (first.getTo() != second.getTo() || first.getWeight() != second.getWeight()) {
+                        areAllSequenceSame = false;
+                        break;
+                    }
+                    first = first.getNext();
+                    second = second.getNext();
+                }
+                if (areAllSequenceSame && first == null && second == null) return true;
+            }
+        }
         return false;
     }
 
@@ -193,7 +392,30 @@ public class Graph extends AbstractGraph {
      * you call the function.
      */
     public void shortest(int[] lengths, int start){
-
+        Arrays.fill(lengths, vertexCount);
+        boolean[] visited = new boolean[vertexCount];
+        Queue queue = new Queue();
+        queue.enqueue(new Node(start));
+        int length = 0;
+        lengths[start] = length;
+        visited[start] = true;
+        
+        int fromNode, toNode;
+        Edge edge;
+        while (!queue.isEmpty()) {
+            length++;
+            fromNode = queue.dequeue().getData();
+            edge = edges[fromNode].getHead();
+            while (edge != null) {
+                toNode = edge.getTo();
+                if (!visited[toNode]){
+                    visited[toNode] = true;
+                    lengths[toNode] = length;
+                    queue.enqueue(new Node(toNode));
+                }
+                edge = edge.getNext();
+            }
+        }
     }
 
     /**
@@ -203,7 +425,32 @@ public class Graph extends AbstractGraph {
      * the visited array is initialized to false and paths array is already allocated.
      */
     public void shortest(int[][] path, boolean[] visited, int start){
-
+        Edge edge;
+        int fromNode, toNode;
+        Queue queue = new Queue();
+        queue.enqueue(new Node(start));
+        path[start] = new int[]{start};
+        visited[start] = true;
+        
+        while (!queue.isEmpty()){
+            fromNode = queue.dequeue().getData();
+            edge = edges[fromNode].getHead();
+            while (edge != null) {
+                toNode = edge.getTo();
+                if (!visited[toNode]){
+                    visited[toNode] = true;
+                    queue.enqueue(new Node(toNode));
+                    
+                    int[] parentPath = path[fromNode];
+                    int[] newPath = new int[parentPath.length + 1];
+                    for (int i = 0; i < parentPath.length; i++)
+                        newPath[i] = parentPath[i];
+                    newPath[parentPath.length] = toNode;
+                    path[toNode] = newPath;
+                }
+                edge = edge.getNext();
+            }
+        }
     }
 
     /**
@@ -212,7 +459,16 @@ public class Graph extends AbstractGraph {
      * paths, where one goes from index1 node to node $i$, then from node $i$ to node $index2$.
      */
     public int shortestIn2Hops(int index1, int index2){
-        return 0;
+        int minCost = Integer.MAX_VALUE;
+        for (int btw = 0; btw < vertexCount; btw++) {
+            Edge firstStep = edges[index1].search(btw);
+            Edge secondStep = edges[btw].search(index2);
+            if (firstStep != null &&  secondStep != null) {
+                if (firstStep.getWeight() + secondStep.getWeight() < minCost)
+                    minCost = firstStep.getWeight() + secondStep.getWeight();
+            }
+        }
+        return minCost;
     }
 
     /**
@@ -223,7 +479,27 @@ public class Graph extends AbstractGraph {
      * duplicates).
      */
     public int[] twoHops(int index){
-        return null;
+        int[] twoHops = new int[0];
+        Queue fromsOfSecondSteps = new Queue();
+        for (int toNode = 0; toNode < vertexCount; toNode++) {
+            if (edges[index].search(toNode) != null) {
+                fromsOfSecondSteps.enqueue(new Node(toNode));
+            }
+        }
+        
+        while (!fromsOfSecondSteps.isEmpty()) {
+            int fromNode = fromsOfSecondSteps.dequeue().getData();
+            for (int toNode = 0; toNode < vertexCount; toNode++) {
+                if (edges[fromNode].search(toNode) != null) {
+                    int[] newTwoHops = new int[twoHops.length + 1];
+                    for (int j = 0; j < twoHops.length; j++)
+                        newTwoHops[j] = twoHops[j];
+                    newTwoHops[twoHops.length] = toNode;
+                    twoHops = newTwoHops;
+                }
+            }
+        }
+        return twoHops;
     }
 
     /**
@@ -231,12 +507,43 @@ public class Graph extends AbstractGraph {
      graph array, where edge is included in the constructed when such edge appears in at least minCount number of graphs. Size represents the
      number of graphs in graphs variable. You may assume that all graphs have the same size and same set of vertices.
      */
-    public Graph(Graph[] graphs, int minCount) {}
+    public Graph(Graph[] graphs, int minCount) {
+        super(graphs[0].vertexCount);
+        this.edges = new EdgeList[graphs[0].vertexCount];
+        for (int i = 0; i < vertexCount; i++) edges[i] = new EdgeList();
+        
+        for (int fromNode = 0; fromNode < vertexCount; fromNode++) {
+            for (int toNode = 0; toNode < vertexCount; toNode++) {
+                int found = 0;
+                for (Graph graph : graphs) {
+                    Edge candidate = graph.edges[fromNode].search(toNode);
+                    if (candidate != null) {
+                        found++;
+                    }
+                }
+                if (found >= minCount) this.edges[fromNode].insert(new Edge(fromNode, toNode, 1));
+            }
+        }
+    }
 
     /**
      * Write the method in linked list implementation which returns the number of odd-valued
      * edges, where an edge is odd-valued if its two distinct node values are both odd.
      * You are not allowed to use extra data structures.
      */
-    public int oddEdgeGraph() { return 0; }
+    public int oddEdgeGraph() {
+        int odds = 0;
+        for (int i = 0; i < vertexCount; i++) {
+            if (i % 2 == 0)
+                continue;
+            else {
+                Edge current = edges[i].getHead();
+                while (current != null) {
+                    if (current.getTo() % 2 == 1) odds++;
+                    current = current.getNext();
+                }
+            }
+        }
+        return odds;
+    }
 }
