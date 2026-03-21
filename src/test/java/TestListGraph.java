@@ -207,6 +207,7 @@ public class TestListGraph {
         expected.addEdge(2, 4, 3);
         expected.addEdge(3, 6, 3);
         expected.addEdge(1, 7, 2);
+        expected.addEdge(6, 3, 2);
         graph.addEdge(1, 5, 1);
         graph.addEdge(6, 3, 1);
         Graph actual = graph.merge(graph2, 0);
@@ -215,12 +216,12 @@ public class TestListGraph {
 
     @Test
     public void testOutgoingListSame() {
-        Array.Graph.Graph graph = new Array.Graph.Graph(6,
+        Graph graph = new Graph(6,
                 new int[][]{{0, 1}, {0, 3}, {0, 4},
                         {2, 1}, {2, 3}, {2, 4},
                         {4, 0}, {5, 1}});
         assertTrue(graph.outgoingListSame());
-        graph = new Array.Graph.Graph(5,
+        graph = new Graph(5,
                 new int[][]{{0, 1}, {1, 2}, {2, 3},
                         {3, 4}, {4, 0}});
         assertFalse(graph.outgoingListSame());
