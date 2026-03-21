@@ -198,20 +198,32 @@ public class TestListGraph {
 
     @Test
     public void testMerge(){
-        Graph graph = new Graph(10,
-                new int[][]{{2, 4}, {6, 3}, {3, 6}, {1, 5}});
-        Graph graph2 = new Graph(10,
-                new int[][]{{2, 4, 2}, {3, 6, 2}, {1, 7, 2}});
-        Graph expected = new Graph(10,
-                new int[][]{{2, 4, 3}, {3, 6, 3}, {1, 7, 2}});
-        expected.addEdge(2, 4, 3);
-        expected.addEdge(3, 6, 3);
-        expected.addEdge(1, 7, 2);
-        expected.addEdge(6, 3, 2);
-        graph.addEdge(1, 5, 1);
-        graph.addEdge(6, 3, 1);
-        Graph actual = graph.merge(graph2, 0);
-        assertEquals(expected, actual);
+        Graph g1 = new Graph(10,
+            new int[][]{
+                    {2, 4, 1},
+                    {6, 3, 1},
+                    {1, 5, 1}
+            });
+
+    Graph g2 = new Graph(10,
+            new int[][]{
+                    {2, 4, 2}, // common edge
+                    {3, 6, 2}, // reverse direction (different edge if directed)
+                    {1, 7, 2}
+            });
+
+    Graph expected = new Graph(10,
+            new int[][]{
+                    {2, 4, 3}, // 1 + 2
+                    {6, 3, 1}, // only in g1
+                    {3, 6, 2}, // only in g2
+                    {1, 5, 1}, // only in g1
+                    {1, 7, 2}  // only in g2
+            });
+
+    Graph actual = g1.merge(g2, 0);
+
+    assertEquals(expected, actual);
     }
 
     @Test
