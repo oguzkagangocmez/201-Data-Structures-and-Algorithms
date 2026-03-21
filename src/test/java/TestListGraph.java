@@ -277,7 +277,7 @@ public class TestListGraph {
          * two-hop 0->2->3 = 10+1 = 11
          * answer must be 4
          */
-        Graph graph = new Graph(4,
+        Graph graph = new Graph(5,
                 new int[][]{{0, 1, 10}, {1, 3, 2}, {0, 2, 3},
                         {2, 3, 20}, {0, 4, 6}, {4, 3, 1}});
         assertEquals(7, graph.shortestIn2Hops(0, 3));
