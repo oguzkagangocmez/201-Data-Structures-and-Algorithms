@@ -60,7 +60,7 @@ public class TestArrayGraph {
         Graph graph = new Graph(6,
                 new int[][]{{0, 1}, {0, 2}, {1, 3},
                 {0, 4}, {0, 5}});
-        Graph temp = new Graph(4,
+        Graph temp = new Graph(5,
                 new int[][]{{0, 1}, {0, 2}, {1, 3}, {0, 4}});
         assertTrue(graph.isSubGraph(temp));
         Graph graph2 = new Graph(6,
