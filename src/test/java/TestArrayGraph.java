@@ -27,7 +27,7 @@ public class TestArrayGraph {
                         {3, 0}, {3, 1}, {4, 5}});
         assertTrue(graph.hasCycle(0, new boolean[6]));
         assertTrue(graph.hasCycle(3, new boolean[6]));
-        assertFalse(graph.hasCycle(3, new boolean[6]));
+        assertFalse(graph.hasCycle(4, new boolean[6]));
     }
 
     @Test
