@@ -64,6 +64,5 @@ Please use it responsibly.
 You can reach me by the following channels: `kagan.gocmez@ozu.edu.tr`
 
 
-
 [![EMail](https://img.shields.io/badge/Email-blue?style=for-the-badge&logo=gmail&logoColor=white)](mailto:kagan.gocmez@ozu.edu.tr)
 [![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/_oguz.kagan_/)
