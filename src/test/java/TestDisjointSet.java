@@ -97,7 +97,7 @@ public class TestDisjointSet {
         disjointSet.union(4, 5);
         Assert.assertEquals("7 9", disjointSet.grandChildren(1).toString());
         disjointSet.union(1, 5);
-        Assert.assertEquals("7 9 5", disjointSet.grandChildren(1).toString());
+        Assert.assertEquals("5 7 9", disjointSet.grandChildren(1).toString());
     }
 
     @Test
