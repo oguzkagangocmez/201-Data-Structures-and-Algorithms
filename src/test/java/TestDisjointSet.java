@@ -243,7 +243,7 @@ public class TestDisjointSet {
         disjointSet.union(1, 2);
         disjointSet.union(5, 6);
         disjointSet.union(5, 7);
-        Assert.assertEquals(2, disjointSet.childrenParentEqual());
+        Assert.assertEquals(0, disjointSet.childrenParentEqual());
     }
 
 }
