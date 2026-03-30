@@ -41,7 +41,6 @@ This Code of Conduct applies to all project spaces, including:
 
 - GitHub issues and pull requests
 - Discussions and comments
-- Contributions to the codebase
 - Any communication related to this project
 
 ## Acknowledgement
