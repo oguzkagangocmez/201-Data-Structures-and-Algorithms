@@ -76,4 +76,4 @@ Please help keep this project welcoming and friendly. Questions, suggestions, an
 
 ## Thank You
 
-Your time and effort are appreciated. Contributions help make the project more useful for learning and reference.
+Your time and effort are appreciated. Contributions help make the project more useful for learning and reference. 
