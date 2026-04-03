@@ -176,6 +176,30 @@ public class TestLinkedList {
         list.insertArray(new int[]{1, 2, 3, 4, 5, 6, 7});
         node = list.lastOneWins(7);
         assertEquals("5", node.toString());
+        // Case 1: small list, k = 2
+        list = new LinkedList();
+        list.insertArray(new int[]{1, 2, 3});
+        node = list.lastOneWins(2);
+        assertEquals("3", node.toString()); // elimination: 2,1 → 3 remains
+        
+        // Case 2: small list, k = 3
+        list = new LinkedList();
+        list.insertArray(new int[]{1, 2, 3});
+        node = list.lastOneWins(3);
+        assertEquals("2", node.toString());
+        
+        // Case 3: k equals list size
+        list = new LinkedList();
+        list.insertArray(new int[]{10, 20, 30, 40});
+        node = list.lastOneWins(4);
+        assertEquals("20", node.toString()); // (based on circular elimination)
+        
+        // Case 4: k = 2, odd length
+        list = new LinkedList();
+        list.insertArray(new int[]{1, 2, 3, 4, 5});
+        node = list.lastOneWins(2);
+        assertEquals("3", node.toString());
+        
     }
 
     @Test
