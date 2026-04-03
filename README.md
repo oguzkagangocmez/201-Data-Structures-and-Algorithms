@@ -64,5 +64,5 @@ Please use it responsibly.
 You can reach me by the following channels: `kagan.gocmez@ozu.edu.tr`
 
 [![EMail](https://img.shields.io/badge/Email-blue?style=for-the-badge&logo=gmail&logoColor=white)](mailto:kagan.gocmez@ozu.edu.tr)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/oğuz-kağan-göçmez-228196314/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTQgM2EyIDIgMCAxIDEgMCA0IDIgMiAwIDAgMSAwLTR6bTAgNmg0djEyaC00em02IDBoMy44djEuNjRoLjA1Yy41My0xIDEuODMtMi4wNSAzLjc3LTIuMDUgNCAwIDQuNzQgMi42MyA0Ljc0IDYuMDV2Ni4zNmgtNHYtNS42N2MwLTEuMzUtLjAyLTMuMDgtMS44OC0zLjA4LTEuODggMC0yLjE3IDEuNDctMi4xNyAyLjk4djUuNzdoLTR6Ii8+PC9zdmc+&logoColor=white)](https://www.linkedin.com/in/oğuz-kağan-göçmez-228196314/)
 [![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/_oguz.kagan_/)
